@@ -1,4 +1,3 @@
-```markdown
 # EDV: Execute-Distill-Verify Paradigm for Agentic Experience Learning
 
 > **Paper**: Escaping the Self-Confirmation Trap: An Execute-Distill-Verify Paradigm for Agentic Experience Learning
@@ -88,4 +87,3 @@ This project will be released under the MIT License.
 
 ## 🙏 Acknowledgments
 We thank the authors of τ²-bench, Mind2Web, and MMTB for their open benchmarks, and the open-source community for LLM inference and tool-use related works.
-```
