@@ -1,0 +1,26 @@
+{
+  "train": [
+    {
+      "task_id": "train-translation-array",
+      "domain": "translation",
+      "instruction": "Translate the programming term 'array' from English to Russian.",
+      "metadata": {
+        "word": "array",
+        "from_language": "en",
+        "to_language": "ru"
+      }
+    }
+  ],
+  "test": [
+    {
+      "task_id": "test-translation-stack",
+      "domain": "translation",
+      "instruction": "Translate the programming term 'stack' from English to Russian.",
+      "metadata": {
+        "word": "stack",
+        "from_language": "en",
+        "to_language": "ru"
+      }
+    }
+  ]
+}
