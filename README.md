@@ -1,122 +1,89 @@
-# EDV: Execute-Distill-Verify for Agentic Experience Learning
+# EDV: Execute-Distill-Verify Paradigm for Agentic Experience Learning
 
-This repository is a compact, runnable reference implementation of the EDV
-pipeline described in the paper:
+> **Paper**: Escaping the Self-Confirmation Trap: An Execute-Distill-Verify Paradigm for Agentic Experience Learning
+>
+> Authors: Shiding Zhu\*, Yudi Qi\*, Yajie Wang\*, Jiaze Li, Chao Song, Yaorui Shi, Yibo Miao, Hanqi Gao, Kai Zhang†
 
-> Escaping the Self-Confirmation Trap: An Execute-Distill-Verify Paradigm for
-> Agentic Experience Learning
+## 📖 Overview
+EDV (Execute-Distill-Verify) is a reliable experience learning framework for LLM agents, targeting the core **Self-Confirmation Trap** in single-agent self-evolution.
 
-The code focuses on the algorithmic structure rather than benchmark
-reproduction. It includes a deterministic toy environment so that the whole
-pipeline can be executed without API keys, GPUs, or external services.
+By decoupling execution, distillation, and validation roles through heterogeneous multi-agent collaboration, EDV transforms experience learning from an isolated self-reflection loop into a collaborative experience construction and filtering pipeline. It suppresses erroneous and noisy experience before memory insertion, enabling more robust continual self-improvement for agents in open-world environments.
 
-## What is implemented
+## ❗ The Self-Confirmation Trap
+Most existing experience learning methods rely on single-agent closed loops: the same agent executes tasks, interprets outcomes, distills lessons, and decides what to write into memory. This design inherently causes the **Self-Confirmation Trap**:
+- Wrong-but-self-consistent trajectories are mistakenly treated as valid successful experience
+- Errors are progressively amplified through repeated memory retrieval and reuse
+- The issue is especially severe in long-horizon tasks with no explicit ground-truth feedback
 
-| Paper concept | Code location |
-| --- | --- |
-| Heterogeneous parallel execution | `src/edv/agents.py`, `src/edv/pipeline.py` |
-| Third-party contrastive distillation | `ContrastiveDistiller` in `src/edv/agents.py` |
-| Consensus-based verification | `ConsensusVerifier` in `src/edv/agents.py` |
-| Shared/private memory banks | `src/edv/memory.py` |
-| Ability matrix model selection | `src/edv/ability.py` |
-| Inference-time retrieval and solving | `EDVPipeline.infer` in `src/edv/pipeline.py` |
-| Runnable demonstration | `examples/run_toy_edv.py` |
+EDV breaks this closed loop through role decoupling and multi-agent consensus mechanisms.
 
-## Quickstart
+## 🧠 EDV Framework
+EDV consists of two core stages: **Experience Construction (offline)** and **Inference-Time Usage (online)**.
 
-```bash
-python -m pip install -e .
-python examples/run_toy_edv.py
-python -m unittest discover -s tests
+### Stage 1: Experience Construction
+1. **Execute**
+   - Multiple heterogeneous agents explore the same task space in parallel
+   - Generate diverse candidate trajectories to expand solution-space coverage
+   - Mitigate the exploration bias of any single agent
+
+2. **Distill**
+   - A designated third-party distillation agent performs cross-trajectory comparative analysis
+   - Extracts reusable candidate experience rules instead of restating a single best trajectory
+   - Eliminates executor-centric self-summarization bias
+
+3. **Verify**
+   - The execution group jointly validates candidate experiences via a consensus-based mechanism
+   - Unanimously approved experience → shared memory bank (general reusable knowledge)
+   - Partially approved experience → corresponding private memory bank (agent-specific knowledge)
+   - Unqualified experience is directly discarded
+
+### Stage 2: Inference-Time Usage
+- **Ability Matrix**: Routes new tasks to the most suitable agent based on historical performance statistics
+- **Hierarchical Retrieval**: Queries the shared memory bank first, then falls back to the agent-specific private memory bank
+- Retrieved memories are injected into the task context to guide subsequent reasoning
+
+## ✨ Key Features
+- Heterogeneous parallel trajectory generation for diverse solution space exploration
+- Third-party contrastive distillation to eliminate executor cognitive bias
+- Consensus-based validation with default-reject policy for high memory quality
+- Shared + private hierarchical memory architecture for both generalization and personalization
+- Lightweight ability matrix routing with no extra inference overhead
+- Consistently outperforms strong baselines across multiple long-horizon benchmarks
+
+## 📊 Experimental Results
+We evaluate EDV on three challenging long-horizon agent benchmarks:
+
+### 1. τ²-bench (Real-world Issue Resolution)
+EDV achieves **86.6% average Pass@1**, outperforming:
+- No Memory baseline: +7.0 ~ +10.2 points
+- ReasoningBank baseline: +4.7 ~ +7.6 points
+- Router ensemble baseline: +3.1 points
+
+### 2. Mind2Web (Web Interaction)
+EDV maintains strong generalization performance across cross-task, cross-website, and cross-domain settings, with consistent improvements over single-agent memory methods and ensemble baselines.
+
+### 3. MMTB (Multi-tool Task Execution)
+EDV achieves an overall score of **58.10**, surpassing the Router baseline (55.96) and all single-model baselines.
+
+> Human audit results confirm that EDV significantly improves memory quality in terms of correctness, actionability and specificity, while reducing hallucination rate and potential harm from memory reuse.
+
+## 🚀 Code Release
+**Full code and reproduction scripts are coming soon!** We are organizing the codebase and will release the complete implementation at this repository shortly.
+
+
+## 📝 Citation
+If you find our work useful, please cite our paper:
+```bibtex
+@article{zhu2025escaping,
+  title={Escaping the Self-Confirmation Trap: An Execute-Distill-Verify Paradigm for Agentic Experience Learning},
+  author={Zhu, Shiding and Qi, Yudi and Wang, Yajie and Li, Jiaze and Song, Chao and Shi, Yaorui and Miao, Yibo and Gao, Hanqi and Zhang, Kai},
+  journal={arXiv preprint},
+  year={2025}
+}
 ```
 
-You can also run the demo without installation:
+## 📄 License
+This project will be released under the MIT License.
 
-```bash
-PYTHONPATH=src python examples/run_toy_edv.py
-```
-
-Expected demo behavior:
-
-1. Two heterogeneous executors solve the same tool-use task.
-2. One executor fails by passing natural-language language names.
-3. One executor succeeds by using ISO 639-1 language codes.
-4. The distiller extracts a transferable memory item.
-5. The verifier accepts it by unanimous consensus.
-6. The memory is written to the shared memory bank.
-7. A later task retrieves that memory during inference.
-
-## Repository layout
-
-```text
-.
-├── data/
-│   └── toy_tasks.json
-├── docs/
-│   └── algorithm.md
-├── examples/
-│   └── run_toy_edv.py
-├── src/
-│   └── edv/
-│       ├── __init__.py
-│       ├── ability.py
-│       ├── agents.py
-│       ├── envs.py
-│       ├── llm.py
-│       ├── memory.py
-│       ├── pipeline.py
-│       └── types.py
-├── tests/
-│   └── test_edv_pipeline.py
-├── LICENSE
-├── pyproject.toml
-└── README.md
-```
-
-## Minimal example
-
-```python
-from edv import EDVPipeline, IsoCodeAgent, NaturalLanguageAgent, Task
-
-pipeline = EDVPipeline.with_components(
-    executors=[
-        NaturalLanguageAgent("legacy-name-agent"),
-        IsoCodeAgent("schema-first-agent"),
-    ]
-)
-
-train_task = Task(
-    task_id="train-translation-array",
-    domain="translation",
-    instruction="Translate the programming term 'array' from English to Russian.",
-    metadata={"word": "array", "from_language": "en", "to_language": "ru"},
-)
-pipeline.construct_experience(train_task)
-
-test_task = Task(
-    task_id="test-translation-stack",
-    domain="translation",
-    instruction="Translate the programming term 'stack' from English to Russian.",
-    metadata={"word": "stack", "from_language": "en", "to_language": "ru"},
-)
-report = pipeline.infer(test_task)
-print(report.trajectory.final_answer)
-```
-
-## Extending to real LLM agents
-
-The toy agents expose the same high-level methods a real agent needs:
-
-- `execute(task, environment, memories)`
-- `plan_tool_call(task, memories)`
-- `verify_experience(candidate, task, trajectories)`
-
-For real experiments, replace `NaturalLanguageAgent` and `IsoCodeAgent` with
-LLM-backed executors. `src/edv/llm.py` contains a prompt-only adapter skeleton
-that can be wired to OpenAI, vLLM, or any local model service.
-
-## Notes
-
-This repository intentionally does not reproduce tau2-bench, Mind2Web, or MMTB
-benchmark numbers. Its purpose is to provide a clean, inspectable codebase that
-captures the EDV control flow and can run a small case end to end.
+## 🙏 Acknowledgments
+We thank the authors of τ²-bench, Mind2Web, and MMTB for their open benchmarks, and the open-source community for LLM inference and tool-use related works.
