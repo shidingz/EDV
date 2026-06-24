@@ -50,6 +50,26 @@ EDV consists of two core stages: **Experience Construction (offline)** and **Inf
 - Lightweight ability matrix routing with no extra inference overhead
 - Consistently outperforms strong baselines across multiple long-horizon benchmarks
 
+## 🔧 Code Overview
+This repository currently provides a lightweight reference implementation of the EDV pipeline. The goal is to make the core idea easy to inspect and run, rather than to reproduce the full benchmark results.
+
+The main workflow is implemented in `src/edv/pipeline.py`. Given a task, `EDVPipeline.construct_experience()` first asks multiple executor agents to solve the same task, then sends their trajectories to a distiller, and finally uses a verifier to decide whether the distilled experience should enter shared memory, private memory, or be discarded. At inference time, `EDVPipeline.infer()` selects a suitable agent with the ability matrix, retrieves relevant memories, and runs the selected agent with those memories.
+
+The code is organized as follows:
+- `src/edv/agents.py`: toy executor agents, the contrastive distiller, and the consensus verifier.
+- `src/edv/memory.py`: shared and private memory banks with simple retrieval.
+- `src/edv/ability.py`: the ability matrix used to route tasks to agents.
+- `src/edv/envs.py`: a small translation-tool environment for demonstration.
+- `examples/run_toy_edv.py`: a minimal runnable case showing Execute → Distill → Verify → Memory Retrieval.
+- `docs/algorithm.md`: pseudocode-style explanation of the full EDV flow.
+
+To run the toy case:
+```bash
+python examples/run_toy_edv.py
+```
+
+This example intentionally includes one agent that fails by using natural-language tool arguments and another agent that succeeds by following the tool schema. EDV compares the trajectories, distills the useful rule, verifies it, stores it as memory, and retrieves it for a later task.
+
 ## 📊 Experimental Results
 We evaluate EDV on three challenging long-horizon agent benchmarks:
 
@@ -68,7 +88,7 @@ EDV achieves an overall score of **58.10**, surpassing the Router baseline (55.9
 > Human audit results confirm that EDV significantly improves memory quality in terms of correctness, actionability and specificity, while reducing hallucination rate and potential harm from memory reuse.
 
 ## 🚀 Code Release
-**Full code and reproduction scripts are coming soon!** We are organizing the codebase and will release the complete implementation at this repository shortly.
+This repository contains a compact runnable implementation of the EDV algorithmic flow. Full benchmark reproduction scripts and dataset-specific adapters will be released separately after cleanup.
 
 
 ## 📝 Citation
