@@ -3,7 +3,9 @@
 > **Paper**: Escaping the Self-Confirmation Trap: An Execute-Distill-Verify Paradigm for Agentic Experience Learning
 >
 > Authors: Shiding Zhu\*, Yudi Qi\*, Yajie Wang\*, Jiaze Li, Chao Song, Yaorui Shi, Yibo Miao, Hanqi Gao, Kai Zhang†
+>
 > Paper link: http://arxiv.org/abs/2606.24428
+
 ## 📖 Overview
 EDV (Execute-Distill-Verify) is a reliable experience learning framework for LLM agents, targeting the core **Self-Confirmation Trap** in single-agent self-evolution.
 
