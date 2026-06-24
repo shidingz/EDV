@@ -89,9 +89,6 @@ EDV achieves an overall score of **58.10**, surpassing the Router baseline (55.9
 
 > Human audit results confirm that EDV significantly improves memory quality in terms of correctness, actionability and specificity, while reducing hallucination rate and potential harm from memory reuse.
 
-## 🚀 Code Release
-This repository contains a compact runnable implementation of the EDV algorithmic flow. Full benchmark reproduction scripts and dataset-specific adapters will be released separately after cleanup.
-
 
 ## 📝 Citation
 If you find our work useful, please cite our paper:
