@@ -74,11 +74,11 @@ EDV achieves an overall score of **58.10**, surpassing the Router baseline (55.9
 ## 📝 Citation
 If you find our work useful, please cite our paper:
 ```bibtex
-@article{zhu2025escaping,
+@article{zhu2026escaping,
   title={Escaping the Self-Confirmation Trap: An Execute-Distill-Verify Paradigm for Agentic Experience Learning},
   author={Zhu, Shiding and Qi, Yudi and Wang, Yajie and Li, Jiaze and Song, Chao and Shi, Yaorui and Miao, Yibo and Gao, Hanqi and Zhang, Kai},
-  journal={arXiv preprint},
-  year={2025}
+  journal={arXiv preprint arXiv:2606.24428},
+  year={2026}
 }
 ```
 
